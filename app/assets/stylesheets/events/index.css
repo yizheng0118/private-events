@@ -1,0 +1,37 @@
+.flex-container{
+    display: flex;
+    gap: 20px;
+    height:100vh;
+}
+.left {
+    display: flex;
+    flex-direction: column;
+}
+.right {
+    display: flex;
+    flex-direction: column;
+    margin-top: 100px;
+    width:100%;
+    height:100%;
+}
+.new-event-form {
+    display:flex;
+    flex-direction: column;
+    gap:5px;
+    width: 350px;
+}
+.new-event-form-heading{
+    display:flex;
+    flex-direction: column;
+}
+.sign-in-error{
+    color:red;
+}
+.right-bottom a:visited {
+    color: blue;
+}
+.right-bottom {
+    display: flex;
+    gap:10px;
+    flex-direction: column;
+}

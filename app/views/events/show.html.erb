@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+  <%= link_to "Home", events_path %>
+  <h1>Event#Show</h1>
+
+  <p>Name: <%=@event.name%></p>
+  <p>Creator: <%=@event.creator.username%></p>
+  <p>Time: <%=@event.time.getlocal.strftime("%m-%d %I:%M %p")%></p>
+  <p>Location: <%=@event.location%></p>
+  <p>Description: <%=@event.description%></p>
+
+</body>
+</html>

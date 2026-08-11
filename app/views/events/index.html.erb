@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%= stylesheet_link_tag "events/index", "data-turbo-track": "reload" %>
+</head>
+
+<body>
+  <div class="flex-container">
+    <div class="left">
+      <h1>Events#Index</h1>
+      <% if user_signed_in? %>
+        <p> Signed In as: <%= current_user.username %></p>
+        <%= link_to "Sign Out", destroy_user_session_path, data: { turbo_method: :delete } %>
+      <% else %>
+        <%= link_to "Sign In", new_user_session_path %>
+        <%= link_to "Sign Up", new_user_registration_path %>
+      <% end %>
+    </div> <!-- left -->
+
+    <div class="right">
+      <div class="right-top">
+        <%= form_with model: @event do |form| %>
+          <div class="new-event-form">  
+            <div class="new-event-form-heading">
+              <%= form.text_field :name, placeholder: "New Event" %>
+              <%= form.datetime_local_field :time %>
+              <%= form.text_field :location, placeholder: "Location" %>
+            </div>
+            <div class="new-event-form-body">
+              <%= form.text_area :description, size: "45x5", placeholder: "Event Details" %>
+            </div>
+            <div class="new-event-form-footer">
+              <%= form.submit %>
+            </div>
+          </div>
+        <% end %>
+      
+        <% if @event.errors.any? %>
+          <% if user_signed_in? %>
+            <p><%= @event.errors.full_messages %></p>
+          <% else %>
+            <p class="sign-in-error">Please Sign In to create an event.</p>
+          <% end %>
+        <% end %>
+      </div> <!-- right-top -->
+      <div class="right-bottom">
+        <% @events.each do |e| %>
+          <%= link_to event_path(e) do %>
+            <% total_seconds = e.time - DateTime.current.localtime %>
+            <% seconds = (total_seconds % 60).floor %>
+            <% total_seconds /= 60 %>
+            <% minutes = (total_seconds % 60).floor %>
+            <% total_seconds /= 60 %>
+            <% hours = (total_seconds % 24).floor %>
+            <% days = (total_seconds / 24).floor %>
+            <div class="event-card">
+              <div class="event-card-header">
+                <%= e.name %> @ <%= e.location %>
+              </div>
+              <%= e.time.getlocal.strftime("%m-%d %I:%M %p") %>
+              <p>In <%= days.to_s + "days" if days > 0 %> <%=hours%>hours <%=minutes%>min</p>
+              <%= e.description %>
+            </div>
+          <% end %>
+        <% end %>
+      </div> <!-- right-bottom -->
+
+    </div> <!-- right -->
+  </div> <!-- flex-container -->
+
+</body>
+</html>
