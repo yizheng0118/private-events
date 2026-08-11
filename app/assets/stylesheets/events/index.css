@@ -13,6 +13,7 @@
     margin-top: 100px;
     width:100%;
     height:100%;
+    gap: 30px;
 }
 .new-event-form {
     display:flex;
@@ -34,4 +35,13 @@
     display: flex;
     gap:10px;
     flex-direction: column;
+}
+.event-card {
+    width: 400px;
+    padding: 10px;
+    color:black;
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.3);
+}
+.event-card-header h3 {
+    margin: 0px;
 }

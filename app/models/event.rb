@@ -7,4 +7,6 @@ class Event < ApplicationRecord
   validates :name, uniqueness: { scope: [:time, :description]}
 
   belongs_to :creator, class_name: 'User'
+  has_many :EventRecords
+  has_many :attendees, through: :EventRecords, source: :user
 end

@@ -55,7 +55,7 @@
             <% days = (total_seconds / 24).floor %>
             <div class="event-card">
               <div class="event-card-header">
-                <%= e.name %> @ <%= e.location %>
+                <h3><%= e.name %></h3> @ <%= e.location %>
               </div>
               <%= e.time.getlocal.strftime("%m-%d %I:%M %p") %>
               <p>In <%= days.to_s + "days" if days > 0 %> <%=hours%>hours <%=minutes%>min</p>

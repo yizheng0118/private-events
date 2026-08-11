@@ -11,5 +11,11 @@
   <p>Location: <%=@event.location%></p>
   <p>Description: <%=@event.description%></p>
 
+  <%= button_to "Attend", event_records_path, method: :post, params: {user_id:current_user.id, event_id:@event.id} %>
+
+  <p> Attendees: </p>
+  <% @event.attendees.each do |attendee| %>
+    <%= attendee.username %>
+  <% end %>
 </body>
 </html>
