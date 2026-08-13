@@ -11,7 +11,9 @@
   <p>Location: <%=@event.location%></p>
   <p>Description: <%=@event.description%></p>
 
-  <%= button_to "Attend", event_records_path, method: :post, params: {user_id:current_user.id, event_id:@event.id} %>
+  <%= button_to "Attend", event_records_path, method: :post, 
+    params: {user_id:current_user.id, event_id:@event.id},
+    disabled: @event.attendees.include?(current_user) %>
 
   <p> Attendees: </p>
   <% @event.attendees.each do |attendee| %>

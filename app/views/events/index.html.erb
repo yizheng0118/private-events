@@ -15,66 +15,103 @@
         <%= link_to "Sign In", new_user_session_path %>
         <%= link_to "Sign Up", new_user_registration_path %>
       <% end %>
+
+      <%= form_with model: @event do |form| %>
+        <div class="new-event-form">  
+          <div class="new-event-form-heading">
+            <%= form.text_field :name, placeholder: "New Event" %>
+            <%= form.datetime_local_field :time %>
+            <%= form.text_field :location, placeholder: "Location" %>
+          </div>
+          <div class="new-event-form-body">
+            <%= form.text_area :description, size: "45x5", placeholder: "Event Details" %>
+          </div>
+          <div class="new-event-form-footer">
+            <%= form.submit %>
+          </div>
+        </div>
+      <% end %>
+    
+      <% if @event.errors.any? %>
+        <% if user_signed_in? %>
+          <p><%= @event.errors.full_messages %></p>
+        <% else %>
+          <p class="sign-in-error">Please Sign In to create an event.</p>
+        <% end %>
+      <% end %>
     </div> <!-- left -->
 
-    <div class="right">
-      <div class="right-top">
-        <%= form_with model: @event do |form| %>
-          <div class="new-event-form">  
-            <div class="new-event-form-heading">
-              <%= form.text_field :name, placeholder: "New Event" %>
-              <%= form.datetime_local_field :time %>
-              <%= form.text_field :location, placeholder: "Location" %>
+    <div class="middle">
+      <h3>Your Upcoming Events</h3>
+      <% @events.select { |e| e.attendees.include?(current_user)}.each do |e| %>
+        <%= link_to event_path(e) do %>
+          <% total_seconds = e.time - DateTime.current.localtime %>
+          <% seconds = (total_seconds % 60).floor %>
+          <% total_seconds /= 60 %>
+          <% minutes = (total_seconds % 60).floor %>
+          <% total_seconds /= 60 %>
+          <% hours = (total_seconds % 24).floor %>
+          <% days = (total_seconds / 24).floor %>
+          <div class="event-card">
+            <div class="event-card-header">
+              <div class="event-card-header-left">
+                <h3><%= e.name %></h3> @ <%= e.location %>
+                <%= e.time.getlocal.strftime("%m-%d %I:%M %p") %>
+              </div>
+              <div class="event-card-header-right">
+                <%= button_to "Attend", event_records_path, 
+                  method: :post, params: { user_id: current_user.id, event_id: e.id}, 
+                  onclick: "event.stopPropagation();",
+                  disabled: true
+                %>
+              </div>
             </div>
-            <div class="new-event-form-body">
-              <%= form.text_area :description, size: "45x5", placeholder: "Event Details" %>
-            </div>
-            <div class="new-event-form-footer">
-              <%= form.submit %>
-            </div>
+            
+            <p>In <%= days.to_s + "days" if days > 0 %> <%=hours%>hours <%=minutes%>min</p>
+            <%= e.description %>
           </div>
         <% end %>
-      
-        <% if @event.errors.any? %>
-          <% if user_signed_in? %>
-            <p><%= @event.errors.full_messages %></p>
-          <% else %>
-            <p class="sign-in-error">Please Sign In to create an event.</p>
-          <% end %>
-        <% end %>
-      </div> <!-- right-top -->
-      <div class="right-bottom">
-        <% @events.each do |e| %>
-          <%= link_to event_path(e) do %>
-            <% total_seconds = e.time - DateTime.current.localtime %>
-            <% seconds = (total_seconds % 60).floor %>
-            <% total_seconds /= 60 %>
-            <% minutes = (total_seconds % 60).floor %>
-            <% total_seconds /= 60 %>
-            <% hours = (total_seconds % 24).floor %>
-            <% days = (total_seconds / 24).floor %>
-            <div class="event-card">
-              <div class="event-card-header">
-                <div class="event-card-header-left">
-                  <h3><%= e.name %></h3> @ <%= e.location %>
-                  <%= e.time.getlocal.strftime("%m-%d %I:%M %p") %>
-                </div>
-                <div class="event-card-header-right">
-                  <%= button_to "Attend", event_records_path, 
-                    method: :post, params: { user_id: current_user.id, event_id: e.id}, 
-                    onclick: "event.stopPropagation();" 
-                  %>
-                </div>
-              </div>
-              
-              <p>In <%= days.to_s + "days" if days > 0 %> <%=hours%>hours <%=minutes%>min</p>
-              <%= e.description %>
-            </div>
-          <% end %>
-        <% end %>
-      </div> <!-- right-bottom -->
+      <% end %>
+      <!--middle-->
+    </div> 
 
-    </div> <!-- right -->
+    <div class="right">
+      <h3>Sign up for other events</h3>
+      <% if @events.reject { |e| e.attendees.include?(current_user)}.empty? %>
+        <p> No other events currently :( </p>
+      <% end %>
+      <% @events.reject { |e| e.attendees.include?(current_user) }.each do |e| %>
+        <%= link_to event_path(e) do %>
+          <% total_seconds = e.time - DateTime.current.localtime %>
+          <% seconds = (total_seconds % 60).floor %>
+          <% total_seconds /= 60 %>
+          <% minutes = (total_seconds % 60).floor %>
+          <% total_seconds /= 60 %>
+          <% hours = (total_seconds % 24).floor %>
+          <% days = (total_seconds / 24).floor %>
+          <div class="event-card">
+            <div class="event-card-header">
+              <div class="event-card-header-left">
+                <h3><%= e.name %></h3> @ <%= e.location %>
+                <%= e.time.getlocal.strftime("%m-%d %I:%M %p") %>
+              </div>
+              <div class="event-card-header-right">
+                <%= button_to "Attend", event_records_path, 
+                  method: :post, params: { user_id: current_user.id, event_id: e.id}, 
+                  onclick: "event.stopPropagation();" 
+                %>
+              </div>
+            </div>
+            
+            <p>In <%= days.to_s + "days" if days > 0 %> <%=hours%>hours <%=minutes%>min</p>
+            <%= e.description %>
+          </div>
+        <% end %>
+      <% end %>
+      
+      <!--right-->
+    </div>
+
   </div> <!-- flex-container -->
 
 </body>
